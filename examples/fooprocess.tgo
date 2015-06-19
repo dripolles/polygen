@@ -1,4 +1,7 @@
-func (f * Foo) process{{Id "a"}}(xs []{{T "a"}}, init, max {{T "a"}}) ({{T "a"}}, error) {
+{{ $a := T "a" }}
+{{ $idA := Id "a" }}
+
+func (f * Foo) process{{$idA}}(xs []{{$a}}, init, max {{$a}}) ({{$a}}, error) {
     res := init
     for _,x := range xs {
         res += x
