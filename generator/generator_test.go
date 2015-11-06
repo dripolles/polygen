@@ -2,6 +2,11 @@ package generator
 
 import (
 	"fmt"
+	"go/ast"
+	"go/importer"
+	"go/parser"
+	"go/token"
+	"go/types"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -33,6 +38,9 @@ func (s *GeneratorSuite) TestGenerateBasic(c *C) {
 
 	dest, err := s.generate("convertslice.tgo", types)
 	c.Assert(err, IsNil)
+
+	info := s.checkTypes(dest)
+	s.checkTypeDef(info, "convertintslice", "func(xs []int) interface{}")
 
 	c.Assert(os.Remove(dest), IsNil)
 }
@@ -66,4 +74,48 @@ func (s *GeneratorSuite) getDestination() (string, error) {
 	dest := destFile.Name()
 
 	return dest, nil
+}
+
+func (s *GeneratorSuite) checkTypes(filename string) *types.Info {
+	fs := token.NewFileSet()
+	checker, info := s.getChecker(fs)
+	f := s.getAstFile(filename, fs)
+	checker.Files([]*ast.File{f})
+
+	return info
+}
+
+func (s *GeneratorSuite) getChecker(
+	fs *token.FileSet,
+) (*types.Checker, *types.Info) {
+	config := &types.Config{
+		Importer: importer.Default(),
+	}
+	pkg := types.NewPackage("", "testpackage")
+	info := &types.Info{
+		Defs: map[*ast.Ident]types.Object{},
+	}
+	checker := types.NewChecker(config, fs, pkg, info)
+
+	return checker, info
+}
+
+func (s *GeneratorSuite) getAstFile(
+	filename string, fs *token.FileSet,
+) *ast.File {
+	f, err := parser.ParseFile(fs, filename, nil, 0)
+	s.c.Assert(err, IsNil)
+
+	return f
+}
+
+func (s *GeneratorSuite) checkTypeDef(info *types.Info, name, typestr string) {
+	for ident, obj := range info.Defs {
+		if ident.Name == name {
+			s.c.Assert(obj.Type(), Equals, typestr)
+			return
+		}
+	}
+
+	s.c.Error("Name %s not found", name)
 }
