@@ -121,10 +121,12 @@ func (g *Generator) executeTemplate(t *template.Template) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	code, err := g.prettyfy(buf.Bytes())
+	raw := buf.Bytes()
+	code, err := g.prettyfy(raw)
 	if err != nil {
 		msg := fmt.Sprintf("invalid code in template '%s'\n%s", t.Name(), err.Error())
 		err = errors.New(msg)
+		code = raw
 	}
 
 	return code, err

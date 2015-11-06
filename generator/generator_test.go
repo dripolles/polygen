@@ -32,10 +32,7 @@ func (s *GeneratorSuite) SetUpTest(c *C) {
 }
 
 func (s *GeneratorSuite) TestGenerateBasic(c *C) {
-	types := TypeAssignments{
-		"a": "int",
-	}
-
+	types := TypeAssignments{"a": "int"}
 	dest, err := s.generate("convertslice.tgo", types)
 	c.Assert(err, IsNil)
 
@@ -45,10 +42,21 @@ func (s *GeneratorSuite) TestGenerateBasic(c *C) {
 	c.Assert(os.Remove(dest), IsNil)
 }
 
+func (s *GeneratorSuite) TestSyntaxError(c *C) {
+	dest, err := s.generate("syntaxerror.tgo", TypeAssignments{"a": "int"})
+	c.Assert(err, Not(IsNil))
+
+	generated, err := ioutil.ReadFile(dest)
+	c.Assert(err, IsNil)
+	c.Assert(os.Remove(dest), IsNil)
+
+	c.Assert(string(generated), DeepEquals, syntaxerrorFixture)
+}
+
 func (s *GeneratorSuite) generate(
 	name string, types TypeAssignments,
 ) (string, error) {
-	source := s.getSource("convertslice.tgo")
+	source := s.getSource(name)
 	dest, err := s.getDestination()
 	s.c.Assert(err, IsNil)
 
@@ -119,3 +127,9 @@ func (s *GeneratorSuite) checkTypeDef(info *types.Info, name, typestr string) {
 
 	s.c.Error("Name %s not found", name)
 }
+
+var syntaxerrorFixture = `package testpackage
+func syntaxerror(x int) {
+	this is not valid code
+}
+`
