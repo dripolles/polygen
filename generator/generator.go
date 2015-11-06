@@ -140,14 +140,22 @@ func (g *Generator) prettyfy(code []byte) ([]byte, error) {
 }
 
 func (g *Generator) getDestFile() (*os.File, error) {
-	filename := g.Destination
-	if err := os.Remove(filename); err != nil {
+	if err := g.ensureDestFileDoesNotExist(); err != nil {
 		return nil, err
 	}
-	file, err := os.Create(filename)
+
+	file, err := os.Create(g.Destination)
 	if err != nil {
 		return nil, err
 	}
 
 	return file, nil
+}
+
+func (g *Generator) ensureDestFileDoesNotExist() error {
+	if _, err := os.Stat(g.Destination); os.IsNotExist(err) {
+		return nil
+	}
+
+	return os.Remove(g.Destination)
 }

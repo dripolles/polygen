@@ -37,17 +37,17 @@ type GeneratorCommand struct {
 	} `positional-args:"true" required:"true"`
 }
 
-func (g *Generator) Dest() string {
+func newGeneratorCommand() *GeneratorCommand {
+	return &GeneratorCommand{}
+}
+
+func (g *GeneratorCommand) Dest() string {
 	d := g.Args.Dest
 	if strings.HasSuffix(d, ".go") {
 		return d
 	}
 
 	return d + ".go"
-}
-
-func newGenerator() *Generator {
-	return &Generator{}
 }
 
 func (g *GeneratorCommand) Execute() error {
