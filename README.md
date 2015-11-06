@@ -14,11 +14,13 @@ A simple case of transforming a slice of any type to a slice of `interface{}` wo
 {{ $a := T "a" }}
 {{ $NA := Name "a" }}
 
-func convert{{$NA}}slice(xs []{{$a}}) interface{} {
+func convert{{$NA}}slice(xs []{{$a}}) []interface{} {
 	ys := make([]interface{}, len(xs))
 	for i, x := range xs {
-		ys[i] = xs
+		ys[i] = x
 	}
+
+	return ys
 }
 ```
 Here, `a` is just a placeholder name for a type. If you save this as `convertslice.tgo` inside package `github.com/youruser/awesome/utils/`, you can create a version of this function that works for `int` just by adding this line to a file in the package that needs it.
@@ -27,7 +29,7 @@ Here, `a` is just a placeholder name for a type. If you save this as `convertsli
 //go:generate polygen github.com/youruser/awesome/utils/convertslice.tgo convertintslice -t"a:int"`
 ```
 
-The first parameter is the package + template path. The second is the name of the output file (`.go` will be added automatically if absent). The `-t` flag lets you map your placeholder types to actual types. Of course, you can map as many types as you want.
+The first parameter is the package + template path. The `-t` flag lets you map your placeholder types to actual types. Of course, you can map as many types as you want. You can also add a second parameter to manually set the name of the output file (although you souldn't usually need it).
 
 polygen provides two template functions to help you create the "generic code" you need.
 

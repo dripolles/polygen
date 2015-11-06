@@ -21,6 +21,9 @@ type TypeAssignments map[string]string
 func NewGenerator(
 	types TypeAssignments, source, destination string,
 ) *Generator {
+	if destination == "" {
+		destination = getDestinationFromTypes(source, types)
+	}
 	return &Generator{
 		Types:       types,
 		Source:      source,

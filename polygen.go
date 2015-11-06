@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -34,7 +35,7 @@ type GeneratorCommand struct {
 	Args  struct {
 		Source string `positional-arg-name:"source" description:"source file"`
 		Dest   string `positional-arg-name:"destination" description:"destination file"`
-	} `positional-args:"true" required:"true"`
+	} `positional-args:"true"`
 }
 
 func newGeneratorCommand() *GeneratorCommand {
@@ -43,6 +44,10 @@ func newGeneratorCommand() *GeneratorCommand {
 
 func (g *GeneratorCommand) Dest() string {
 	d := g.Args.Dest
+	if d == "" {
+		return d
+	}
+
 	if strings.HasSuffix(d, ".go") {
 		return d
 	}
@@ -51,6 +56,9 @@ func (g *GeneratorCommand) Dest() string {
 }
 
 func (g *GeneratorCommand) Execute() error {
+	if g.Args.Source == "" {
+		return errors.New("Source file must be provided")
+	}
 	gen := generator.NewGenerator(g.Types, g.Args.Source, g.Dest())
 	err := gen.Generate()
 

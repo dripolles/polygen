@@ -1,3 +1,7 @@
+polygen
+# Force this to be generated. Good for sanity check
+generator/fixtures/convertslice_float64.go
+
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
 *.a

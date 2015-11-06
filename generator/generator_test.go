@@ -31,6 +31,12 @@ func (s *GeneratorSuite) SetUpTest(c *C) {
 	s.c = c
 }
 
+func (s *GeneratorSuite) TestDestination(c *C) {
+	types := TypeAssignments{"b": "int", "a": "float64", "c": "foo"}
+	gen := NewGenerator(types, "template.tgo", "")
+
+	c.Assert(gen.Destination, DeepEquals, "template_float64intfoo.go")
+}
 func (s *GeneratorSuite) TestGenerateBasic(c *C) {
 	types := TypeAssignments{"a": "int"}
 	dest, err := s.generate("convertslice.tgo", types)
