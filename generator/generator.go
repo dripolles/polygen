@@ -67,8 +67,8 @@ func (g *Generator) getTemplate() (*template.Template, error) {
 func (g *Generator) addTemplateFunctions(t *template.Template) {
 	p := g.createPolymap()
 	fm := template.FuncMap{
-		"T":  p.T,
-		"Id": p.Id,
+		"T":    p.Type,
+		"Name": p.Name,
 	}
 
 	t.Funcs(fm)

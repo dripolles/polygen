@@ -1,0 +1,3 @@
+func syntaxerror(x {{T "a"}}) {
+	this is not valid code
+}
