@@ -26,7 +26,7 @@ func convert{{$NA}}slice(xs []{{$a}}) []interface{} {
 Here, `a` is just a placeholder name for a type. If you save this as `convertslice.tgo` inside package `github.com/youruser/awesome/utils/`, you can create a version of this function that works for `int` just by adding this line to a file in the package that needs it.
 
 ```Go
-//go:generate polygen github.com/youruser/awesome/utils/convertslice.tgo convertintslice -t"a:int"`
+//go:generate polygen github.com/youruser/polythings/convertslice.tgo -t"a:int"`
 ```
 
 The first parameter is the package + template path. The `-t` flag lets you map your placeholder types to actual types. Of course, you can map as many types as you want. You can also add a second parameter to manually set the name of the output file (although you souldn't usually need it).
