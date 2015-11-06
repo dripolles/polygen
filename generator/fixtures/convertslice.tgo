@@ -1,0 +1,9 @@
+{{ $a := T "a" }}
+{{ $idA := Id "a" }}
+
+func convert{{$idA}}slice(xs []{{$a}}) interface{} {
+	ys := make([]interface{}, len(xs))
+	for i, x := range xs {
+		ys[i] = xs
+	}
+}
